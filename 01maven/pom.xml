@@ -1,0 +1,78 @@
+    <properties>
+        <!-- Í³Ò»Ô´ÂëµÄ±àÂë·½Ê½ -->
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <!-- Í³Ò»¸÷¸ö¿ò¼Ü°æ±¾ -->
+        <struts.version>2.5.10</struts.version>
+        <spring.version>4.3.8.RELEASE</spring.version>
+        <hibernate.version>5.1.7.Final</hibernate.version>
+    </properties>
+ 
+    <dependencies>
+        <!-- JunitÒÀÀµ -->
+        <dependency>
+            <groupId>junit</groupId>
+            <artifactId>junit</artifactId>
+            <version>4.12</version>
+            <scope>test</scope>
+        </dependency>
+        <!-- Spring ºËÐÄÒÀÀµ -->
+        <dependency>
+            <groupId>org.springframework</groupId>
+            <artifactId>spring-core</artifactId>
+            <version>${spring.version}</version>
+        </dependency>
+        <!-- Spring webÒÀÀµ -->
+        <dependency>
+            <groupId>org.springframework</groupId>
+            <artifactId>spring-web</artifactId>
+            <version>${spring.version}</version>
+        </dependency>
+        <!-- SpringÕûºÏORM¿ò¼ÜÒÀÀµ -->
+        <dependency>
+            <groupId>org.springframework</groupId>
+            <artifactId>spring-orm</artifactId>
+            <version>${spring.version}</version>
+        </dependency>
+        <!-- Struts2 ºËÐÄÒÀÀµ -->
+        <dependency>
+            <groupId>org.apache.struts</groupId>
+            <artifactId>struts2-core</artifactId>
+            <version>${struts.version}</version>
+        </dependency>
+        <!-- Struts2ºÍSpringÕûºÏÒÀÀµ -->
+        <dependency>
+            <groupId>org.apache.struts</groupId>
+            <artifactId>struts2-spring-plugin</artifactId>
+            <version>${struts.version}</version>
+        </dependency>
+        <!-- Hibernate ºËÐÄÒÀÀµ -->
+        <dependency>
+            <groupId>org.hibernate</groupId>
+            <artifactId>hibernate-core</artifactId>
+            <version>${hibernate.version}</version>
+        </dependency>
+        <!-- MySQL ÒÀÀµ -->
+        <dependency>
+            <groupId>mysql</groupId>
+            <artifactId>mysql-connector-java</artifactId>
+            <version>5.1.42</version>
+        </dependency>
+        <!-- C3P0 ÒÀÀµ -->
+        <dependency>
+            <groupId>com.mchange</groupId>
+            <artifactId>c3p0</artifactId>
+            <version>0.9.5</version>
+        </dependency>
+        <!-- AspectJÒÀÀµ -->
+        <dependency>
+            <groupId>org.aspectj</groupId>
+            <artifactId>aspectjweaver</artifactId>
+            <version>1.8.10</version>
+        </dependency>
+        <!-- SLF4JÒÀÀµ -->
+        <dependency>
+            <groupId>org.slf4j</groupId>
+            <artifactId>slf4j-log4j12</artifactId>
+            <version>1.7.25</version>
+        </dependency>
+    </dependencies>
