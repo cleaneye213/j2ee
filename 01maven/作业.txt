@@ -1,0 +1,9 @@
+1、把das项目改成maven
+2、把das项目拆成一个父项目
+das-parent,
+das-common(jar),
+das-system(war)
+3、（了解）搭建maven私服
+
+MVN tomcat7:run
+
