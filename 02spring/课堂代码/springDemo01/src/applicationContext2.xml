@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:schemaLocation="
+        http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd">
+
+    <!--
+        id:bean的标识，用来给其他配置或者springs使用。
+        class:要被实例的对象的类路径
+        scope:singleton 单例模式
+            prototype 多例
+        init-method 用于配置初始化方法,准备数据等
+        destroy-method 用于配置销毁方法,清理资源等
+    -->
+    <bean id="menuService" class="com.xunke.ioc2.demo.MenuServiceImpl" scope="singleton" init-method="intMethod"
+          destroy-method="destoryMethod"/>
+
+</beans>

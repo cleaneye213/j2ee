@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:schemaLocation="
+        http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd">
+
+    <!--
+        id:bean的标识，用来给其他配置或者springs使用。
+        class:要被实例的对象的类路径
+        scope:sigle 单例模式
+            prototype 多例
+    -->
+    <bean id="userService" class="com.xunke.ioc.demo.UserServiceImpl" scope="prototype">
+        <!--
+            name:是UserServiceImpl类的属性名称
+            ref:是把哪一个Bean注入到属性里，是指向bean标签的ID
+        -->
+        <property name="userDao" ref="userDaoId"/>
+    </bean>
+
+    <bean id="userDaoId" class="com.xunke.ioc.demo.UserDaoImpl"/>
+
+    <!-- 获得userservice
+		* factory-bean 确定工厂实例
+		* factory-method 确定普通方法
+	-->
+    <bean id="daoFactory" class="com.xunke.ioc.demo.DaoFactory" factory-method="createUserDao"/>
+    <bean id="userDaoId2" class="com.xunke.ioc.demo.UserDaoImpl" factory-bean="daoFactory"/>
+</beans>
