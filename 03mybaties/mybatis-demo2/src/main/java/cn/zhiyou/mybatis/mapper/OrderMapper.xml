@@ -1,0 +1,133 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+        
+<!-- 
+1、namespace 填的是UserMapper接口的全路径
+2、statement对象里的id必须跟UserMapper里的接口方法名称一样
+3、statement对象里的parameterType必须跟跟UserMapper里的接口方法参数一样
+4、statement对象里的resultType必须跟跟UserMapper里的接口方法返回值一样(返回值是list，则返回单个对象类型)
+ -->
+<mapper namespace="cn.zhiyou.mybatis.mapper.OrderMapper">
+
+	<resultMap type="orderQuery02" id="orderQueryResultMap">
+		<id column="id" property="id"/>
+		<result column="user_id" property="userId"/>
+		<result column="order_number" property="orderNumber"/>
+		<result column="create_time" property="createTime"/>
+		<result column="detail" property="detail"/>
+		<!-- 与用户信息一对一 -->
+		<association property="user" javaType="cn.zhiyou.mybatis.po.TbUser">
+			<id column="user_id" property="id"/>
+			<result column="username" property="username"/>
+			<result column="sex" property="sex"/>
+			<result column="birthday" property="birthday"/>
+			<result column="address" property="address"/>
+		</association>
+	</resultMap>
+	
+	<resultMap type="orderQuery03" id="orderQuery03ResultMap">
+		<!-- 订单信息 -->
+		<id column="order_id" property="id"/>
+		<result column="user_id" property="userId"/>
+		<result column="order_number" property="orderNumber"/>
+		<result column="create_time" property="createTime"/>
+		<result column="detail" property="detail"/>
+		<!-- 与用户信息一对一 -->
+		<association property="user" javaType="cn.zhiyou.mybatis.po.TbUser">
+			<id column="user_id" property="id"/>
+			<result column="username" property="username"/>
+			<result column="sex" property="sex"/>
+			<result column="birthday" property="birthday"/>
+			<result column="address" property="address"/>
+		</association>
+		<!-- 
+			订单明细 订单与它一对多关系 
+			注意：此处属性用:ofType
+		-->
+		<collection property="orderDetailList" ofType="orderDetail">
+			<id column="detail_id" property="id"/>
+			<result column="order_id" property="order_id"/>
+			<result column="goods_id" property="goods_id"/>
+			<result column="goods_num" property="goods_num"/>
+		</collection>
+	</resultMap>
+	
+	<!-- 实现延迟加载 -->
+	<resultMap type="cn.zhiyou.mybatis.po.OrderQuery04" id="orderQuery04ResultMap">
+		<!-- 订单信息 -->
+		<id column="order_id" property="id"/>
+		<result column="user_id" property="userId"/>
+		<result column="order_number" property="orderNumber"/>
+		<result column="create_time" property="createTime"/>
+		<result column="detail" property="detail"/>
+		
+		<association select="cn.zhiyou.mybatis.mapper.UserMapper.findUserById" column="user_id" property="user" javaType="cn.zhiyou.mybatis.po.TbUser">
+		</association>
+	</resultMap>
+	
+	
+	<select id="queryOrderUserLazy" resultMap="orderQuery04ResultMap">
+		SELECT * FROM tb_order
+	</select>
+	
+	<!-- 一对多结果映射 -->
+	<select id="queryOrderUserDetailByResMap" resultMap="orderQuery03ResultMap">
+		SELECT
+			tb_order.id order_id,
+			tb_order.user_id,
+			tb_order.order_number,
+			tb_order.create_time,
+			tb_order.detail,
+			
+			tb_user.id userId,
+			tb_user.username,
+			tb_user.sex,
+			tb_user.birthday,
+			tb_user.address,
+			
+			tb_order_detail.id detail_id,
+			tb_order_detail.goods_id,
+			tb_order_detail.goods_num
+			
+			FROM tb_order, tb_user, tb_order_detail
+		WHERE tb_order.user_id = tb_user.id
+			AND tb_order.id = tb_order_detail.order_id
+		
+	</select>
+	
+	
+	<!-- 一对一结果映射 -->
+	<!-- 
+	如果使用resultType作为输出映射，数据库表字段和实体对象属
+	性名称不一致的将获取不到值
+	 -->
+	<select id="queryOderUserByReslutMap" resultMap="orderQueryResultMap">
+		SELECT
+          tb_order.id,
+          tb_order.user_id,
+          tb_order.order_number,
+          tb_user.username,
+          tb_user.sex
+        FROM tb_order, tb_user
+        WHERE tb_order.user_id = tb_user.id
+	</select>
+	
+
+	
+	<!-- 一对一映射 -->
+	<!-- 
+	如果使用resultType作为输出映射，数据库表字段和实体对象属
+	性名称不一致的将获取不到值
+	 -->
+	<select id="queryOderAndUser"  resultType="orderQuery01">
+		SELECT
+          tb_order.id,
+          tb_order.user_id,
+          tb_order.order_number,
+          tb_user.username,
+          tb_user.sex
+        FROM tb_order, tb_user
+        WHERE tb_order.user_id = tb_user.id
+	</select>
+</mapper>

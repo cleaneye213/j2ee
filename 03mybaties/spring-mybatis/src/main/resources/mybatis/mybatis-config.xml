@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE configuration PUBLIC "-//mybatis.org//DTD Config 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-config.dtd">
+    
+<configuration>
+
+<typeAliases>
+	<!--单个别名定义-->
+	<!-- <typeAlias type="cn.zhiyou.mybatis.po.TbUser" alias="tbUser"/> -->
+	<!-- 批量定义别名 (建议使用)-->
+	<!-- package:指定包名称来为该包下的model类声明别名，默认的别名就是类型，首字符大小写均可-->
+	<package name="cn.zhiyou.mybatis.po"/>
+</typeAliases>
+
+<!-- 加载映射文件 -->
+<mappers>
+
+	<!-- 
+		<mapper resource="mapper/User.xml"></mapper>
+	 -->
+	<!-- <mapper resource="mapper/UserMapper.xml"></mapper> -->
+	<!-- <package name="cn.zhiyou.mybatis.mapper"></package> -->
+</mappers>
+</configuration>

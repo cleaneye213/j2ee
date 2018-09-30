@@ -1,0 +1,208 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+        
+<!-- 
+1、namespace 填的是UserMapper接口的全路径
+2、statement对象里的id必须跟UserMapper里的接口方法名称一样
+3、statement对象里的parameterType必须跟跟UserMapper里的接口方法参数一样
+4、statement对象里的resultType必须跟跟UserMapper里的接口方法返回值一样(返回值是list，则返回单个对象类型)
+ -->
+<mapper namespace="cn.zhiyou.mybatis.mapper.UserMapper">
+
+	<!-- 开启二级缓存 -->
+	<cache type="org.mybatis.caches.ehcache.EhcacheCache"/>
+	
+	<!-- 多对多结果映射 -->
+	<resultMap type="cn.zhiyou.mybatis.po.TbUser" id="tbUserResultMap">
+		<id property="user_id" column="id"/>
+		<result property="username" column="username_"/>
+		<result property="sex" column="sex_"/>
+		<result property="birthday" column="birthday_"/>
+		<result property="address" column="address_"/>
+		<!-- 与订单信息 一对多 -->
+		<collection property="orderList" ofType="cn.zhiyou.mybatis.po.Order">
+			<!-- 订单信息 -->
+			<id column="order_id" property="id"/>
+			<result column="user_id" property="userId"/>
+			<result column="order_number" property="orderNumber"/>
+			<result column="create_time" property="createTime"/>
+			<result column="detail" property="detail"/>
+			<!-- 与订单明细  一对多关系 -->
+			<collection property="orderDetailList" ofType="cn.zhiyou.mybatis.po.OrderDetail">
+				<id column="detail_id" property="id"/>
+				<result column="order_id" property="order_id"/>
+				<result column="goods_id" property="goods_id"/>
+				<result column="goods_num" property="goods_num"/>
+				<!-- 与商品信息 一对一关系 -->
+				<association property="goods" javaType="cn.zhiyou.mybatis.po.Goods">
+					<id column="good_id" property="id"/>
+					<result column="name" property="name"/>
+					<result column="price" property="price"/>
+					<result column="goods_create_time" property="create_time"/>
+					<result column="goods_detail" property="detail"/>
+				</association>
+			</collection>
+		</collection>
+	</resultMap>
+	
+	<resultMap id="tbUserResult" type="cn.zhiyou.mybatis.po.TbUser">
+		<!-- 
+			property 代表类里的属性名称 
+			column 代表statement对象执行sql语句的结果列名
+		-->
+		<id property="id" column="id"/>
+		<result property="username" column="username_"/>
+		<result property="sex" column="sex_"/>
+		<result property="birthday" column="birthday_"/>
+		<result property="address" column="address_"/>
+	</resultMap>
+	
+	<!-- 查询用户订单商品信息  -->
+	<select id="queryUserGoodsInfo" resultMap="tbUserResultMap">
+		SELECT
+			tb_user.id user_id,
+			tb_user.username,
+			tb_user.sex,
+			tb_user.birthday,
+			tb_user.address,
+			
+			tb_order.id  order_id,
+			tb_order.order_number,
+			tb_order.create_time,
+			tb_order.detail,
+			
+			tb_order_detail.id detail_id,
+			tb_order_detail.goods_id,
+			tb_order_detail.goods_num,
+			
+			tb_goods.id good_id,
+			tb_goods.name,
+			tb_goods.price,
+			tb_goods.create_time goods_create_time,
+			tb_goods.detail goods_detail
+			
+		FROM tb_order, tb_user, tb_order_detail, tb_goods
+		WHERE tb_order.user_id = tb_user.id
+			AND tb_order.id = tb_order_detail.order_id
+			AND tb_order_detail.id = tb_goods.id
+					
+	</select>
+	
+	<!-- 根据ids查询多条记录 -->
+	<select id="queryUserByIds" parameterType="cn.zhiyou.mybatis.po.UserQuery" resultType="tbUser">
+		select * from tb_user 
+			where id in 
+		<!-- 生成：(1,2,3) -->
+		<foreach collection="ids" item="id" separator="," open="(" close=")">
+			#{id}
+		</foreach>
+	</select>
+	
+	<!-- 返回resultMap -->
+	<select id="selectAllUser" resultMap="tbUserResult">
+		select id,username as username_,sex as sex_,
+			birthday as birthday_,address as address_
+		 from tb_user 
+	</select>
+
+	<!-- 
+		返回值为string;必须只能查询一列
+	-->
+	<select id="queryUserName" parameterType="string" resultType="string">
+		select username from tb_user where username like '%${value}%'
+	</select>
+
+	<!-- 根据map查询 -->
+	<select id="queryUserByMap" parameterType="hashMap" resultType="tbUser">
+		select * from tb_user where username like '%${username1}%'
+		 	and sex=#{sex1}
+	</select>
+	
+
+	<!-- 根据用户名称和性别查询 -->
+	<select id="queryUserBy" parameterType="cn.zhiyou.mybatis.po.UserQuery" resultType="tbUser">
+		select * from tb_user 
+		<!-- where标签可以去掉查询条件中的第一个and关键字 -->
+		<where>
+			<if test="user.username !=null and user.username!=''">
+				and	username like '%${user.username}%'
+			</if>
+			<if test="user.sex !=null and user.sex!=''">
+				and sex=#{user.sex}
+			</if>
+		</where>
+			 	
+	</select>
+	
+	<!-- 动态sql：sql片段，include -->
+	<select id="queryUserList" parameterType="cn.zhiyou.mybatis.po.UserQuery" resultType="tbUser">
+		select * from tb_user 
+		<where>
+			<include refid="query_condition"></include>
+		</where>
+	</select>
+	
+	<sql id="query_condition">
+		<if test="user.username !=null and user.username!=''">
+			and	username like '%${user.username}%'
+		</if>
+		<if test="user.sex !=null and user.sex!=''">
+			and sex=#{user.sex}
+		</if>
+	</sql>
+	
+	<!-- 
+		id:自定义，建议有意义的，不能重复
+		parameterType:传递参数的类型
+		#{}:占位符，表示传递的参数值，如果是基本的数据类型，
+			{}里面可以用value或者其中值
+			#{id}：其中的id表示接收的输入参数，参数名称就是id，
+			如果输入参数是简单类型，#{}中的参数名可以任意，可以为value或者其他
+		resultType:结果返回值;指定sql输出结果的所映射的java对象类型
+	 -->
+	<select id="findUserById" parameterType="long" resultType="cn.zhiyou.mybatis.po.TbUser">
+		select * from tb_user where id=#{value}
+	</select>
+	
+	
+	<!-- 根据用户名称模糊查询 -->
+	<!-- 
+		4.${}:表示拼接sql串，将接收到参数的内容不加任何修饰拼接在sql中
+    	5.使用${}容易引起sql注入
+    	6.${value}:接受输入参数的内容，如果传入类型是简单类型，${}中只能用value
+
+	 -->
+	<select id="findUserByName" parameterType="String" resultType="cn.zhiyou.mybatis.po.TbUser">
+		select * from tb_user where username like '%${value}%'
+	</select>
+	
+	<!-- 添加用户信息 -->
+	<insert id="addUser" parameterType="cn.zhiyou.mybatis.po.TbUser">
+		<!--
+			将插入数据的主键返回，返回到user对象中
+		        SELECT LAST_INSERT_ID()：得到刚insert进去记录的主键值，只适用于自增主键
+		        keyProperty：将查询到主键值设置到parameterType指定的对象的哪个属性
+		        order：SELECT LAST_INSERT_ID()执行顺序，相对于insert语句来说它的执行顺序
+		        resultType：指定SELECT LAST_INSERT_ID()的结果类型
+		-->
+		<!-- 如果是自增的主键，可以不用写selectKey;
+			如果不配置则在java代码里的用户对象不能获得主键返回值
+		-->
+		<selectKey keyProperty="id" order="AFTER" resultType="java.lang.Long">
+			select LAST_INSERT_ID()
+		</selectKey>
+		insert into tb_user(username,sex,birthday,address) 
+	value(#{username},#{sex},#{birthday},#{address})
+	</insert>
+	
+	
+	<update id="updateUser" parameterType="tbUser">
+		update tb_user set username=#{username},sex=#{sex},birthday=#{birthday},address=#{address}
+		 where id=#{id}
+	</update>
+	
+	<delete id="deleteUser" parameterType="java.lang.Long">
+		delete from tb_user where id=#{value}
+	</delete>
+</mapper>

@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE configuration PUBLIC "-//mybatis.org//DTD Config 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-config.dtd">
+    
+<configuration>
+<!-- 加载属性文件 -->
+<properties resource="jdbc.properties"/>
+<settings>
+<!-- 延迟加载 默认false -->
+<setting name="lazyLoadingEnabled" value="true" />
+<!-- 积极加载 默认true -->
+<setting name="aggressiveLazyLoading" value="false" />
+<!--二级缓存的总开关 默认为false-->
+<setting name="cacheEnabled" value="true"/>
+</settings>
+
+<typeAliases>
+	<!--单个别名定义-->
+	<!-- <typeAlias type="cn.zhiyou.mybatis.po.TbUser" alias="tbUser"/> -->
+	<!-- 批量定义别名 (建议使用)-->
+	<!-- package:指定包名称来为该包下的model类声明别名，默认的别名就是类型，首字符大小写均可-->
+	<package name="cn.zhiyou.mybatis.po"/>
+</typeAliases>
+
+	<environments default="development">
+		<environment id="development">
+		<!-- 使用jdbc管理事务mybatis -->
+		<transactionManager type="JDBC"/>
+		<dataSource type="POOLED">
+			<property name="driver" value="${jdbc.driverClassName}"/>
+			<property name="url" value="${jdbc.url}"/>
+			<property name="username" value="${jdbc.username}"/>
+			<property name="password" value="${jdbc.password}"/>
+		</dataSource>
+	</environment>
+</environments>
+<!-- 加载映射文件 -->
+<mappers>
+	<!-- 
+		<mapper resource="mapper/User.xml"></mapper>
+	 -->
+	<!-- <mapper resource="mapper/UserMapper.xml"></mapper> -->
+	<package name="cn.zhiyou.mybatis.mapper"></package>
+</mappers>
+</configuration>
+        
+        
+     
+     
